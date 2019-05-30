@@ -1,13 +1,12 @@
-diff -ur orig.binutils/ld/scripttempl/elf.sc binutils/ld/scripttempl/elf.sc > binutils.patch
---- orig.binutils/ld/scripttempl/elf.sc	2016-09-30 21:06:08.000000000 +0200
-+++ binutils/ld/scripttempl/elf.sc	2016-09-30 21:21:06.000000000 +0200
-@@ -553,7 +553,8 @@
+--- binutils-2.31.90.orig/ld/scripttempl/elf.sc	2019-01-19 17:01:33.000000000 +0100
++++ binutils-2.31.90/ld/scripttempl/elf.sc	2019-05-30 20:18:58.000000000 +0200
+@@ -577,7 +577,8 @@
    ${CREATE_SHLIB-${CREATE_PIE-${RELOCATING+. = ${DATA_ADDR-${DATA_SEGMENT_ALIGN}};}}}
-   ${CREATE_SHLIB+${RELOCATING+. = ${SHLIB_DATA_ADDR-${DATA_SEGMENT_ALIGN}};}}
-   ${CREATE_PIE+${RELOCATING+. = ${SHLIB_DATA_ADDR-${DATA_SEGMENT_ALIGN}};}}
+   ${CREATE_SHLIB+. = ${SHLIB_DATA_ADDR-${DATA_SEGMENT_ALIGN}};}
+   ${CREATE_PIE+. = ${SHLIB_DATA_ADDR-${DATA_SEGMENT_ALIGN}};}
 -
 +  /* Hacky hackity hack. Need this because otherwise data segment is not aligned enough. */
 +  . = ALIGN(0x10000);
    /* Exception handling  */
-   .eh_frame     ${RELOCATING-0} : ONLY_IF_RW { KEEP (*(.eh_frame)) ${RELOCATING+*(.eh_frame.*)} }
+   .eh_frame     ${RELOCATING-0} : ONLY_IF_RW { KEEP (*(.eh_frame))${RELOCATING+ *(.eh_frame.*)} }
    .gnu_extab    ${RELOCATING-0} : ONLY_IF_RW { *(.gnu_extab) }
