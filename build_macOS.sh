@@ -241,12 +241,12 @@ if [ ${STEP6} ]; then
   rm -rf ${BUILDDIR}/vita-headers
   mkdir -p ${BUILDDIR}/vita-headers
   cd ${BUILDDIR}/vita-headers
-  vita-libs-gen ${SRCDIR}/vita-headers/db.json .
+  vita-libs-gen ${SRCDIR}/vita-headers/db.yml .
   make ARCH=${VITASDKROOT}/bin/arm-vita-eabi ${JOBS}
   cp *.a ${VITASDKROOT}/arm-vita-eabi/lib/
   cp -r ${SRCDIR}/vita-headers/include ${VITASDKROOT}/arm-vita-eabi/
   mkdir -p ${VITASDKROOT}/share
-  cp ${SRCDIR}/vita-headers/db.json ${VITASDKROOT}/share
+  cp ${SRCDIR}/vita-headers/db.yml ${VITASDKROOT}/share
 fi
 
 if [ ${STEP7} ]; then
