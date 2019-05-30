@@ -142,17 +142,15 @@ if [ ${STEP2} ]; then
   rm -rf ${BUILDDIR}/libzip-${LIBZIP_VERSION}
   mkdir -p ${BUILDDIR}/libzip-${LIBZIP_VERSION}
   cd ${BUILDDIR}/libzip-${LIBZIP_VERSION}
-  CFLAGS='-DZIP_STATIC' ${SRCDIR}/libzip-${LIBZIP_VERSION}/configure --host=${HOST_NATIVE} --prefix=$INSTALLDIR --disable-shared --enable-static
+  cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$INSTALLDIR -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DENABLE_BZIP2=OFF ${SRCDIR}/libzip-${LIBZIP_VERSION}
   make ${JOBS} -C lib install
 
   echo "[Step 2.3] Build libelf..."
-  cd ${DOWNLOADDIR}
-  if [ ! -f libelf-${LIBELF_VERSION}.tar.gz ]; then
-    curl -L -O http://www.mr511.de/software/libelf-${LIBELF_VERSION}.tar.gz
+  if [ ! -d ${SRCDIR}/libelf-${LIBELF_VERSION} ]; then
+      git clone https://github.com/Distrotech/libelf.git ${SRCDIR}/libelf-${LIBELF_VERSION}
+      cd ${SRCDIR}/libelf-${LIBELF_VERSION}
+      patch -p1 < ${PATCHDIR}/libelf.patch
   fi
-  tar xzf libelf-${LIBELF_VERSION}.tar.gz -C ${SRCDIR}
-  cd ${SRCDIR}/libelf-${LIBELF_VERSION}
-  patch -p1 < ${PATCHDIR}/libelf.patch
   rm -rf ${BUILDDIR}/libelf-${LIBELF_VERSION}
   mkdir -p ${BUILDDIR}/libelf-${LIBELF_VERSION}
   cd ${BUILDDIR}/libelf-${LIBELF_VERSION}
@@ -190,13 +188,17 @@ fi
 
 if [ ${STEP4} ]; then
   echo "[Step 4] Build binutils..."
-  cd ${SRCDIR}
-  if [ ! -d ${SRCDIR}/binutils-${BINUTILS_VERSION}/.git ]; then
-    git clone git://sourceware.org/git/binutils-gdb.git binutils-${BINUTILS_VERSION}
+  if [ ! -f ${DOWNLOADDIR}/binutils-${BINUTILS_VERSION}.tar.xz ]; then
+    cd ${DOWNLOADDIR}
+    curl -L -O ftp://sourceware.org/pub/binutils/snapshots/binutils-${BINUTILS_VERSION}.tar.xz
   fi
-  cd binutils-${BINUTILS_VERSION}
-  patch -p1 < ${PATCHDIR}/binutils.patch
-  #patch -p1 < ${PATCHDIR}/binutils-mingw.patch
+  if [ ! -d ${SRCDIR}/binutils-${BINUTILS_VERSION} ]; then
+    cd ${SRCDIR}
+    tar -xzf ${DOWNLOADDIR}/binutils-${BINUTILS_VERSION}.tar.xz  
+    cd binutils-${BINUTILS_VERSION}
+    patch -p1 < ${PATCHDIR}/binutils.patch
+    #patch -p1 < ${PATCHDIR}/binutils-mingw.patch
+  fi
   rm -rf ${BUILDDIR}/binutils-${BINUTILS_VERSION}
   mkdir -p ${BUILDDIR}/binutils-${BINUTILS_VERSION}
   cd ${BUILDDIR}/binutils-${BINUTILS_VERSION}
