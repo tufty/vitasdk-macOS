@@ -214,10 +214,10 @@ export PATH=${VITASDK}/bin:${PATH}
 if [ ${STEP5} ]; then
   echo "[Step 5] Build gcc first time..."
   cd ${DOWNLOADDIR}
-  if [ ! -f gcc-${GCC_VERSION}.tar.bz2 ]; then
-    curl -L -O http://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2
+  if [ ! -f gcc-${GCC_VERSION}.tar.xz ]; then
+    curl -L -O http://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz
   fi
-  tar xjf gcc-${GCC_VERSION}.tar.bz2 -C ${SRCDIR}
+  tar xjf gcc-${GCC_VERSION}.tar.xz -C ${SRCDIR}
   cd ${SRCDIR}/gcc-${GCC_VERSION}
   patch -p1 < ${PATCHDIR}/gcc.patch
   #patch -p1 < ${PATCHDIR}/gcc-mingw.patch
